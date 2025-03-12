@@ -21,6 +21,10 @@ type Album struct {
 	Price  float64 `json:"price"`
 }
 
+func home(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Hello World!"})
+}
+
 func getAlbums(c *gin.Context) {
 	var albums []Album
 
@@ -134,13 +138,15 @@ func deleteAlbumByID(c *gin.Context) {
 
 func main() {
 	config := mysql.Config{
-		User:                 os.Getenv("DBUSER"),
-		Passwd:               os.Getenv("DBPASS"),
+		User:                 os.Getenv("DB_USER"),
+		Passwd:               os.Getenv("DB_PASSWORD"),
 		Net:                  "tcp",
-		Addr:                 "127.0.0.1:3306",
-		DBName:               "myapp",
-		AllowNativePasswords: true,
+		Addr:                 fmt.Sprintf("%s:%s", os.Getenv("DB_HOST"), os.Getenv("DB_PORT")),
+		DBName:               os.Getenv("DB_NAME"),
+		AllowNativePasswords: false,
 	}
+
+	fmt.Println(config.FormatDSN())
 
 	var err error
 	db, err = sql.Open("mysql", config.FormatDSN())
@@ -155,11 +161,12 @@ func main() {
 	fmt.Println("Connected!")
 
 	router := gin.Default()
+	router.GET("/", home)
 	router.GET("/albums", getAlbums)
 	router.GET("/albums/:id", getAlbumByID)
 	router.POST("/albums", postAlbums)
 	router.PATCH("/albums/:id", updateAlbumByID)
 	router.DELETE("/albums/:id", deleteAlbumByID)
 
-	router.Run("localhost:8080")
+	router.Run()
 }
