@@ -10,6 +10,8 @@ services:
     depends_on: # これはdepends_onと何が違うのか
       db:
         condition: service_healthy
+    volumes:
+      - ./:/go/src
     environment:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}

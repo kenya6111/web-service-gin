@@ -22,7 +22,7 @@ type Album struct {
 }
 
 func home(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, gin.H{"message": "Hello World!"})
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Hello World!!!！！"})
 }
 
 func getAlbums(c *gin.Context) {

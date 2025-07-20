@@ -1,12 +1,14 @@
 # 注意 go.mod記載のversionと合わせる
 # 軽量にするためalpineを使用
-FROM golang:1.18-alpine
+FROM golang:tip-alpine3.22
 
 # コンテナ内の作業ディレクトリを/appに設定
 WORKDIR /go/src
 
 # ホストマシンからtodo-app内の全ファイルを、コンテナ内の作業ディレクトリ(/app)にコピー
 COPY . .
+
+RUN go install github.com/air-verse/air@latest
 
 # go.modファイルに記載された依存パッケージをdownload
 RUN go mod download
@@ -18,4 +20,6 @@ RUN go build -o main ./main.go
 # EXPOSE 8080
 
 # コンテナ起動後に、実行ファイルを実行
-CMD ["./main"]
+# CMD ["./main"]
+
+CMD ["air", "-c", ".air.toml"]
