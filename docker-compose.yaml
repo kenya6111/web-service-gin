@@ -1,0 +1,53 @@
+services:
+  go:
+    build:
+      dockerfile: ./docker/go/Dockerfile
+      context: .
+    # image: golang:1.18-alpine ## Dockerfileで書いてるのでいらない
+    container_name: web-server-gin ##任意のコンテナ名を指定する
+    ports: #ホストのポートとコンテナのポートの対応繋ぎこみ
+      - "8080:8080"
+    depends_on: # これはdepends_onと何が違うのか
+      db:
+        condition: service_healthy
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+    working_dir: /go/src
+    stdin_open: true
+  db:
+    image: mysql:5.7
+    platform: linux/x86_64
+    container_name: web-server-gin-mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - my-db:/var/lib/mysql/
+      - ./sql/init:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} ##MySQLにおけるスーパーユーザであるrootアカウントに設定するためのパスワードを指定
+      - MYSQL_ALLOW_EMPTY_PASSWORD=${MYSQL_ALLOW_EMPTY_PASSWORD} #オプション変数。yesを設定することで、rootユーザに空のパスワードを設定してコンテナを起動することを許可
+      - MYSQL_RANDOM_ROOT_PASSWORD=${MYSQL_RANDOM_ROOT_PASSWORD} # オプションの変数です。yesを設定することで、rootユーザのための初期パスワードを（pwgenを利用して）ランダムで生成します。生成されたパスワードは標準出力に表示されます
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "mysql",
+          "-pmypassword",
+        ]
+      timeout: 20s
+      retries: 10
+
+volumes: #永続化の設定 /var/lib/mysqlはコンテナ内でMySQLがデータを保存するパス。
+  my-db: # どうなるの？→コンテナを削除しても、MySQLのデータベースの中身はmy-dbに保存され続ける。docker compose downしても消えない

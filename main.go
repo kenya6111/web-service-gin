@@ -143,7 +143,7 @@ func main() {
 		Net:                  "tcp",
 		Addr:                 fmt.Sprintf("%s:%s", os.Getenv("DB_HOST"), os.Getenv("DB_PORT")),
 		DBName:               os.Getenv("DB_NAME"),
-		AllowNativePasswords: false,
+		AllowNativePasswords: true,
 	}
 
 	fmt.Println(config.FormatDSN())
