@@ -59,7 +59,6 @@ docker compose -f docker-compose-dev.yml up -d
 - `Air` による **ソースのライブリロード** が有効になります
 - http://localhost:8080 にアクセスして動作を確認
 
----
 
 ## 本番環境の場合
 
@@ -77,4 +76,3 @@ docker compose up -d
 
 - http://localhost:8080 にアクセスして動作を確認
 
----
