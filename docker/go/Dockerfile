@@ -1,6 +1,6 @@
 # 注意 go.mod記載のversionと合わせる
 # 軽量にするためalpineを使用
-FROM golang:tip-alpine3.22
+FROM golang:tip-alpine3.22 AS dev
 
 # コンテナ内の作業ディレクトリを/appに設定
 WORKDIR /go/src
@@ -21,5 +21,15 @@ RUN go build -o main ./main.go
 
 # コンテナ起動後に、実行ファイルを実行
 # CMD ["./main"]
-
 CMD ["air", "-c", ".air.toml"]
+
+
+FROM alpine:3.22.1 AS prod
+
+WORKDIR /app
+
+COPY --from=dev /go/src/main .
+
+COPY . .
+
+CMD [ "/app/main" ]

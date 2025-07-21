@@ -3,6 +3,7 @@ services:
     build:
       dockerfile: ./docker/go/Dockerfile
       context: .
+      target: prod
     # image: golang:1.18-alpine ## Dockerfileで書いてるのでいらない
     container_name: web-server-gin ##任意のコンテナ名を指定する
     ports: #ホストのポートとコンテナのポートの対応繋ぎこみ
