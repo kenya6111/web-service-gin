@@ -4,11 +4,10 @@ services:
       dockerfile: ./docker/go/Dockerfile
       context: .
       target: prod
-    # image: golang:1.18-alpine ## Dockerfileで書いてるのでいらない
-    container_name: web-server-gin ##任意のコンテナ名を指定する
-    ports: #ホストのポートとコンテナのポートの対応繋ぎこみ
+    container_name: web-server-gin
+    ports:
       - "8080:8080"
-    depends_on: # これはdepends_onと何が違うのか
+    depends_on:
       db:
         condition: service_healthy
     volumes:
@@ -34,9 +33,9 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} ##MySQLにおけるスーパーユーザであるrootアカウントに設定するためのパスワードを指定
-      - MYSQL_ALLOW_EMPTY_PASSWORD=${MYSQL_ALLOW_EMPTY_PASSWORD} #オプション変数。yesを設定することで、rootユーザに空のパスワードを設定してコンテナを起動することを許可
-      - MYSQL_RANDOM_ROOT_PASSWORD=${MYSQL_RANDOM_ROOT_PASSWORD} # オプションの変数です。yesを設定することで、rootユーザのための初期パスワードを（pwgenを利用して）ランダムで生成します。生成されたパスワードは標準出力に表示されます
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=${MYSQL_ALLOW_EMPTY_PASSWORD}
+      - MYSQL_RANDOM_ROOT_PASSWORD=${MYSQL_RANDOM_ROOT_PASSWORD}
     healthcheck:
       test:
         [
@@ -52,5 +51,5 @@ services:
       timeout: 20s
       retries: 10
 
-volumes: #永続化の設定 /var/lib/mysqlはコンテナ内でMySQLがデータを保存するパス。
-  my-db: # どうなるの？→コンテナを削除しても、MySQLのデータベースの中身はmy-dbに保存され続ける。docker compose downしても消えない
+volumes:
+  my-db:
